@@ -1,294 +1,108 @@
-let wordsDatabse = [
-    "the",
-    "be",
-    "of",
-    "and",
-    "a",
-    "to",
-    "in",
-    "he",
-    "have",
-    "it",
-    "that",
-    "for",
-    "they",
-    "I",
-    "with",
-    "as",
-    "not",
-    "on",
-    "she",
-    "at",
-    "by",
-    "this",
-    "we",
-    "you",
-    "do",
-    "but",
-    "from",
-    "or",
-    "which",
-    "one",
-    "would",
-    "all",
-    "will",
-    "there",
-    "say",
-    "who",
-    "make",
-    "when",
-    "can",
-    "more",
-    "if",
-    "no",
-    "man",
-    "out",
-    "other",
-    "so",
-    "what",
-    "time",
-    "up",
-    "go",
-    "about",
-    "than",
-    "into",
-    "could",
-    "state",
-    "only",
-    "new",
-    "year",
-    "some",
-    "take",
-    "come",
-    "these",
-    "know",
-    "see",
-    "use",
-    "get",
-    "like",
-    "then",
-    "first",
-    "any",
-    "work",
-    "now",
-    "may",
-    "such",
-    "give",
-    "over",
-    "think",
-    "most",
-    "even",
-    "find",
-    "day",
-    "also",
-    "after",
-    "way",
-    "many",
-    "must",
-    "look",
-    "before",
-    "great",
-    "back",
-    "through",
-    "long",
-    "where",
-    "much",
-    "should",
-    "well",
-    "people",
-    "down",
-    "own",
-    "just",
-    "because",
-    "good",
-    "each",
-    "those",
-    "feel",
-    "seem",
-    "how",
-    "high",
-    "too",
-    "place",
-    "little",
-    "world",
-    "very",
-    "still",
-    "nation",
-    "hand",
-    "old",
-    "life",
-    "tell",
-    "write",
-    "become",
-    "here",
-    "show",
-    "house",
-    "both",
-    "between",
-    "need",
-    "mean",
-    "call",
-    "develop",
-    "under",
-    "last",
-    "right",
-    "move",
-    "thing",
-    "general",
-    "school",
-    "never",
-    "same",
-    "another",
-    "begin",
-    "while",
-    "number",
-    "part",
-    "turn",
-    "real",
-    "leave",
-    "might",
-    "want",
-    "point",
-    "form",
-    "off",
-    "child",
-    "few",
-    "small",
-    "since",
-    "against",
-    "ask",
-    "late",
-    "home",
-    "interest",
-    "large",
-    "person",
-    "end",
-    "open",
-    "public",
-    "follow",
-    "during",
-    "present",
-    "without",
-    "again",
-    "hold",
-    "govern",
-    "around",
-    "possible",
-    "head",
-    "consider",
-    "word",
-    "program",
-    "problem",
-    "however",
-    "lead",
-    "system",
-    "set",
-    "order",
-    "eye",
-    "plan",
-    "run",
-    "keep",
-    "face",
-    "fact",
-    "group",
-    "play",
-    "stand",
-    "increase",
-    "early",
-    "course",
-    "change",
-    "help",
-    "line"
-];
-
 let wordsList = [];
-let currentWord = 0;
-let currentLetterIndex = -1;
-let currentWordIndex = 0;
-let inputHistory = [];
-let userInput = "";
+let letterIndex = 0;
+let isTyping = false;
+let wordIndex = 0;
 
+/**
+ * @brief this function is used to initialize the wordsList array
+ * with a random selection of words from the data.js file.
+ */
 function initWords() {
+    wordsList = [];
     for (let i = 0; i < 100; i++) {
-        randomWord = wordsDatabse[Math.floor(Math.random() * wordsDatabse.length)];
+        randomWord = allWords[Math.floor(Math.random() * allWords.length)];
         wordsList.push(randomWord);
     }
 }
 
-function addWords() {
-    let testContainer = document.getElementById("testContainer");
-    console.log(testContainer);
+/**
+ * @brief Takes the random selection of words out of the wordsList array
+ * and creates a new DOM element for each letter. The tag name for such
+ * an element is also "letter"
+ */
+function showWords() {
+    let lettersElement = document.getElementById("letters");
 
     for (let i = 0; i < wordsList.length; i++) {
-        let newWord = document.createElement("word");
         for (let j = 0; j < wordsList[i].length; j++) {
-            let newLetter = document.createElement("letter");
-            newLetter.innerText = wordsList[i][j];
-            newWord.appendChild(newLetter);
+            let letter = document.createElement("letter");
+            letter.innerText = wordsList[i][j];
+            lettersElement.append(letter);
         }
-        testContainer.appendChild(newWord);
+        let space = document.createElement("letter");
+        space.innerText = " ";
+        lettersElement.append(space);
     }
+    lettersElement.querySelectorAll("letter")[0].classList.add("active");
 }
 
-// Caret related functions
 
-function hideCaret() {
-    document.getElementById("caret").classList.add("hidden");
-}
-
-function showCaret() {
-    let caret = document.getElementById("caret");
-    caret.classList.remove("hidden");
-}
-
-function moveCaret() {
-    let caret = document.getElementById("caret");
-    let currentWordElement = document.getElementById("testContainer").children[currentWordIndex + 1];
-
-    caret.offsetLeft = currentWordElement.children[currentLetterIndex]
-    console.log(currentWordElement.children);
-}
-
-function animateCaret() {
-    let caret = document.getElementById("caret");
-    caret.style.animationName = "flashingAnimation";
-}
-
-function staticCaret() {
-    let caret = document.getElementById("caret");
-    caret.style.animationName = "";
-}
-
-document.addEventListener('keydown', (event) => {
-    event.preventDefault();
-    switch (event.key) {
-        case ":":
-            handleCommands();
-            break;
-        case " ":
-            handleUserInput();
-            console.log(userInput);
-            userInput = "";
-            break;
-        default:
-            if (event.which < 65 || event.which > 90) {
-                return;
+function typing(event) {
+    if (event.code == `Key${event.key.toUpperCase()}`) {
+        if (letterIndex < allLetterElements.length - 1) {
+            if (!isTyping) {
+                isTyping = true;
             }
-            userInput += event.key;
-            break;
+            if (typedCharacter == " ") {
+                if (inputField.value.length > wordsList[wordIndex]) {
+                    
+                }
+                wordIndex++;
+            }
+            if (allLetterElements[letterIndex].innerText == typedCharacter) {
+                allLetterElements[letterIndex].classList.add("correct");
+            } else {
+                allLetterElements[letterIndex].classList.add("incorrect");
+            }
+            letterIndex++;
+
+            allLetterElements.forEach(letter => letter.classList.remove("active"));
+            allLetterElements[letterIndex].classList.add("active");
+        } else {
+            document.getElementById("inputField").value = "";
+        }
+    } else if (event.code == "Backspace") {
+        if (event.ctrlKey) {
+            // handle the deletion of words
+        } else {
+            // handle the deletion of a single letter
+        }
     }
-})
+    let lettersElement = document.getElementById("letters");
+    let inputField = document.getElementById("inputField");
+    let allLetterElements = lettersElement.querySelectorAll("letter");
+    let typedCharacter = inputField.value.split("")[letterIndex];
+    console.log(typedCharacter);
 
-function handleCommands() { }
+}
 
-function handleUserInput() {
 
+function reset() {
+    document.getElementById("letters").innerHTML = "";
+    document.getElementById("inputField").value = "";
+    initWords();
+    showWords();
 }
 
 initWords();
-console.log("initialized words successfully!");
-addWords();
-console.log("addes words to the DOM");
-showCaret();
+showWords();
 
-moveCaret();
+document.getElementById("inputField").addEventListener("keydown", (event) => {
+    switch (event.key) {
+        case "Enter":
+            reset();
+            break;
+        default:
+            typing(event);
+    }
+});
+
+
+/**
+ * @brief Disbale all click evenets globally for the DOM
+ */
+document.addEventListener("mousedown", handler, true);
+function handler(e) {
+    e.stopPropagation();
+    e.preventDefault();
+}
