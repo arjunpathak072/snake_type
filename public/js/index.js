@@ -36,46 +36,47 @@ function showWords() {
     lettersElement.querySelectorAll("letter")[0].classList.add("active");
 }
 
-
-function typing(event) {
-    if (event.code == `Key${event.key.toUpperCase()}`) {
-        if (letterIndex < allLetterElements.length - 1) {
-            if (!isTyping) {
-                isTyping = true;
-            }
-            if (typedCharacter == " ") {
-                if (inputField.value.length > wordsList[wordIndex]) {
-                    
-                }
-                wordIndex++;
-            }
-            if (allLetterElements[letterIndex].innerText == typedCharacter) {
-                allLetterElements[letterIndex].classList.add("correct");
-            } else {
-                allLetterElements[letterIndex].classList.add("incorrect");
-            }
-            letterIndex++;
-
-            allLetterElements.forEach(letter => letter.classList.remove("active"));
-            allLetterElements[letterIndex].classList.add("active");
-        } else {
-            document.getElementById("inputField").value = "";
-        }
-    } else if (event.code == "Backspace") {
-        if (event.ctrlKey) {
-            // handle the deletion of words
-        } else {
-            // handle the deletion of a single letter
-        }
-    }
+function handlePrintable() {
     let lettersElement = document.getElementById("letters");
-    let inputField = document.getElementById("inputField");
     let allLetterElements = lettersElement.querySelectorAll("letter");
-    let typedCharacter = inputField.value.split("")[letterIndex];
-    console.log(typedCharacter);
 
+    let inputField = document.getElementById("inputField");
+    let typedCharacter = inputField.value.split("")[letterIndex];
+
+    if (letterIndex < allLetterElements.length - 1) {
+        if (!isTyping) {
+            isTyping = true;
+        }
+        if (allLetterElements[letterIndex].innerText == typedCharacter) {
+            allLetterElements[letterIndex].classList.add("correct");
+        } else {
+            allLetterElements[letterIndex].classList.add("incorrect");
+        }
+        letterIndex++;
+
+        allLetterElements.forEach(letter => letter.classList.remove("active"));
+        allLetterElements[letterIndex].classList.add("active");
+    } else {
+        document.getElementById("inputField").value = "";
+    }
 }
 
+function handleBackspace(event) {
+    let lettersElement = document.getElementById("letters");
+    let allLetterElements = lettersElement.querySelectorAll("letter");
+
+    if (event.ctrlKey) {
+        // TODO handle the deletion of a word
+    } else {
+        if (letterIndex > 0) {
+            letterIndex--
+            allLetterElements[letterIndex].classList.remove("correct");
+            allLetterElements[letterIndex].classList.remove("incorrect");
+        }
+        allLetterElements.forEach(letter => letter.classList.remove("active"));
+        allLetterElements[letterIndex].classList.add("active");
+    }
+}
 
 function reset() {
     document.getElementById("letters").innerHTML = "";
@@ -84,19 +85,25 @@ function reset() {
     showWords();
 }
 
-initWords();
-showWords();
-
-document.getElementById("inputField").addEventListener("keydown", (event) => {
-    switch (event.key) {
+document.getElementById("inputField").addEventListener("keyup", (event) => {
+    switch (event.code) {
         case "Enter":
+            console.log("handling enter key")
             reset();
             break;
-        default:
-            typing(event);
+
+        case `Key${event.key.toUpperCase()}`:
+        case "Space":
+            console.log("handling printable character");
+            handlePrintable();
+            break;
+
+        case "Backspace":
+            console.log("handling backspace key");
+            handleBackspace(event);
+            break;
     }
 });
-
 
 /**
  * @brief Disbale all click evenets globally for the DOM
@@ -106,3 +113,6 @@ function handler(e) {
     e.stopPropagation();
     e.preventDefault();
 }
+
+initWords();
+showWords();
