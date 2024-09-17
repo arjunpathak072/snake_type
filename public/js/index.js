@@ -1,114 +1,110 @@
 let wordsList = [];
 let letterIndex = 0;
-let isTyping = false;
-let wordIndex = 0;
 let currentLetter = '';
+let lastSpaceIndex = 0;
+let spaceIndices = [];
 
-/**
- * @brief this function is used to initialize the wordsList array
- * with a random selection of words from the data.js file.
- */
-function initWords() {
-    wordsList = [];
+function initWordsList() {
     for (let i = 0; i < 100; i++) {
         randomWord = allWords[Math.floor(Math.random() * allWords.length)];
         wordsList.push(randomWord);
     }
 }
 
-/**
- * @brief Takes the random selection of words out of the wordsList array
- * and creates a new DOM element for each letter. The tag name for such
- * an element is also "letter"
- */
-function showWords() {
+function renderWords() {
     let lettersElement = document.getElementById("letters");
+    let idx = 0;
 
     for (let i = 0; i < wordsList.length; i++) {
         for (let j = 0; j < wordsList[i].length; j++) {
             let letter = document.createElement("letter");
             letter.innerText = wordsList[i][j];
             lettersElement.append(letter);
+            idx++;
         }
         let space = document.createElement("letter");
         space.innerText = " ";
         lettersElement.append(space);
+
+        spaceIndices.push(idx);
+        idx++
     }
     lettersElement.querySelectorAll("letter")[0].classList.add("active");
 }
 
-function handlePrintable() {
+function handlePrintableCharacter(typedCharacter) {
     let lettersElement = document.getElementById("letters");
     let allLetterElements = lettersElement.querySelectorAll("letter");
-
-    let inputField = document.getElementById("inputField");
-    let typedCharacter = inputField.value.charAt(letterIndex);
+    allLetterElements[letterIndex].classList.remove("active");
 
     if (letterIndex < allLetterElements.length - 1) {
-        if (!isTyping) {
-            isTyping = true;
-        }
         if (allLetterElements[letterIndex].innerText == typedCharacter) {
             allLetterElements[letterIndex].classList.add("correct");
         } else {
             allLetterElements[letterIndex].classList.add("incorrect");
         }
+        if (lastSpaceIndex+1 < spaceIndices.length && letterIndex > spaceIndices[lastSpaceIndex+1]) {
+            lastSpaceIndex++;
+        }
         letterIndex++;
-
-        allLetterElements.forEach(letter => letter.classList.remove("active"));
         allLetterElements[letterIndex].classList.add("active");
     } else {
-        reset();
+        resetTest();
     }
 }
 
 function handleBackspace(event) {
-    let inputField = document.getElementById("inputField");
     let lettersElement = document.getElementById("letters");
     let allLetterElements = lettersElement.querySelectorAll("letter");
+    allLetterElements[letterIndex].classList.remove("active");
 
     if (event.ctrlKey) {
-        let newPosition = inputField.value.lastIndexOf(' ') + 1;
-        for (let i = letterIndex; i >= newPosition; i--) {
-            allLetterElements[i].classList.remove("correct");
-            allLetterElements[i].classList.remove("incorrect");
+        if (lastSpaceIndex >= 0) {
+            for (let i = letterIndex; i > spaceIndices[lastSpaceIndex]; i--) {
+                allLetterElements[i].classList.remove("correct");
+                allLetterElements[i].classList.remove("incorrect");
+            }
+            letterIndex = spaceIndices[lastSpaceIndex]+1;
+            lastSpaceIndex--;
         }
-        letterIndex = newPosition;
     } else {
         if (letterIndex > 0) {
             letterIndex--
             allLetterElements[letterIndex].classList.remove("correct");
             allLetterElements[letterIndex].classList.remove("incorrect");
+
+            if (letterIndex < spaceIndices[lastSpaceIndex] && lastSpaceIndex > 0) {
+                lastSpaceIndex--;
+            }
         }
     }
-    allLetterElements.forEach(letter => letter.classList.remove("active"));
     allLetterElements[letterIndex].classList.add("active");
 }
 
-function reset() {
+function resetTest() {
     document.getElementById("letters").innerHTML = "";
-    document.getElementById("inputField").value = "";
+    letterIndex = 0;
+    lastSpaceIndex = 0;
+    wordsList = [];
+    spaceIndices = [0];
     initWords();
     showWords();
 }
 
-document.getElementById("inputField").addEventListener("keyup", (event) => {
+document.addEventListener("keydown", (event) => {
     switch (event.code) {
         case "Enter":
-            console.log("handling enter key")
-            reset();
+            resetTest();
             break;
 
         case `Key${event.key.toUpperCase()}`:
         case "Space":
             if (!event.altKey && !event.ctrlKey) {
-                console.log("handling printable character");
-                handlePrintable();
+                handlePrintableCharacter(event.key);
             }
             break;
 
         case "Backspace":
-            console.log("handling backspace key");
             handleBackspace(event);
             break;
     }
@@ -123,5 +119,5 @@ function handler(e) {
     e.preventDefault();
 }
 
-initWords();
-showWords();
+initWordsList();
+renderWords();

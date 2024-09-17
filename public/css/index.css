@@ -62,18 +62,10 @@ table {
     font-size: 32px;
 }
 
-#inputField {
-    opacity: 0;
-    position: absolute;
-    z-index: -1;
-}
-
 #letters {
     height: 100%;
     width: 100%;
     font-family: 'Courier New', Courier, monospace;
-    /* word-break: normal; */
-    /* white-space: normal; */
     overflow-x: wrap;
     overflow-y: hidden;
 }
@@ -89,18 +81,33 @@ table {
 }
 
 .active {
-    background-color: var(--darkModeHighlight);
+    /* background-color: var(--darkModeHighlight); */
     border-radius: 2px;
+    animation: blink 1.5s linear infinite;
 }
 
 .incorrect {
-    text-decoration: underline var(--darkModeFontIncorrect);
+    color: var(--darkModeFontIncorrect);
 }
 
 .correct {
     color: var(--darkModeFontCorrect);
 }
 
-.badWord {
-    text-decoration: underline;
+@keyframes blink {
+    0% {
+        background-color: rgba(0, 122, 204, 0);
+    }
+    25% {
+        background-color: rgba(0, 122, 204, 0.5);
+    }
+    50% {
+        background-color: rgba(0, 122, 204, 1);
+    }
+    75% {
+        background-color: rgba(0, 122, 204, 0.5);
+    }
+    100% {
+        background-color: rgba(0, 122, 204, 0);
+    }
 }
