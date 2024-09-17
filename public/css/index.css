@@ -94,7 +94,7 @@ table {
 }
 
 .incorrect {
-    color: var(--darkModeFontIncorrect);
+    text-decoration: underline var(--darkModeFontIncorrect);
 }
 
 .correct {

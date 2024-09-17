@@ -2,6 +2,7 @@ let wordsList = [];
 let letterIndex = 0;
 let isTyping = false;
 let wordIndex = 0;
+let currentLetter = '';
 
 /**
  * @brief this function is used to initialize the wordsList array
@@ -41,7 +42,7 @@ function handlePrintable() {
     let allLetterElements = lettersElement.querySelectorAll("letter");
 
     let inputField = document.getElementById("inputField");
-    let typedCharacter = inputField.value.split("")[letterIndex];
+    let typedCharacter = inputField.value.charAt(letterIndex);
 
     if (letterIndex < allLetterElements.length - 1) {
         if (!isTyping) {
@@ -57,25 +58,31 @@ function handlePrintable() {
         allLetterElements.forEach(letter => letter.classList.remove("active"));
         allLetterElements[letterIndex].classList.add("active");
     } else {
-        document.getElementById("inputField").value = "";
+        reset();
     }
 }
 
 function handleBackspace(event) {
+    let inputField = document.getElementById("inputField");
     let lettersElement = document.getElementById("letters");
     let allLetterElements = lettersElement.querySelectorAll("letter");
 
     if (event.ctrlKey) {
-        // TODO handle the deletion of a word
+        let newPosition = inputField.value.lastIndexOf(' ') + 1;
+        for (let i = letterIndex; i >= newPosition; i--) {
+            allLetterElements[i].classList.remove("correct");
+            allLetterElements[i].classList.remove("incorrect");
+        }
+        letterIndex = newPosition;
     } else {
         if (letterIndex > 0) {
             letterIndex--
             allLetterElements[letterIndex].classList.remove("correct");
             allLetterElements[letterIndex].classList.remove("incorrect");
         }
-        allLetterElements.forEach(letter => letter.classList.remove("active"));
-        allLetterElements[letterIndex].classList.add("active");
     }
+    allLetterElements.forEach(letter => letter.classList.remove("active"));
+    allLetterElements[letterIndex].classList.add("active");
 }
 
 function reset() {
@@ -94,8 +101,10 @@ document.getElementById("inputField").addEventListener("keyup", (event) => {
 
         case `Key${event.key.toUpperCase()}`:
         case "Space":
-            console.log("handling printable character");
-            handlePrintable();
+            if (!event.altKey && !event.ctrlKey) {
+                console.log("handling printable character");
+                handlePrintable();
+            }
             break;
 
         case "Backspace":
