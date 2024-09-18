@@ -1,8 +1,8 @@
 let wordsList = [];
-let letterIndex = 0;
+let letterIndex = 1;
 let currentLetter = '';
 let lastSpaceIndex = 0;
-let spaceIndices = [];
+let spaceIndices = [0];
 
 function initWordsList() {
     for (let i = 0; i < 100; i++) {
@@ -13,7 +13,11 @@ function initWordsList() {
 
 function renderWords() {
     let lettersElement = document.getElementById("letters");
-    let idx = 0;
+    let blankSpace = document.createElement("letter");
+    blankSpace.innerText = " ";
+    blankSpace.style.display = "none";
+    lettersElement.append(blankSpace);
+    let idx = 1;
 
     for (let i = 0; i < wordsList.length; i++) {
         for (let j = 0; j < wordsList[i].length; j++) {
@@ -29,7 +33,7 @@ function renderWords() {
         spaceIndices.push(idx);
         idx++
     }
-    lettersElement.querySelectorAll("letter")[0].classList.add("active");
+    lettersElement.querySelectorAll("letter")[1].classList.add("active");
 }
 
 function handlePrintableCharacter(typedCharacter) {
@@ -40,6 +44,13 @@ function handlePrintableCharacter(typedCharacter) {
     if (letterIndex < allLetterElements.length - 1) {
         if (allLetterElements[letterIndex].innerText == typedCharacter) {
             allLetterElements[letterIndex].classList.add("correct");
+        } else if (allLetterElements[letterIndex].innerText == ' ') {
+            let extraLetter = document.createElement("extraLetter");
+            extraLetter.innerText = typedCharacter;
+            extraLetter.classList.add("incorrect");
+            allLetterElements[letterIndex].insertAdjacentElement("beforebegin", extraLetter);
+            allLetterElements[letterIndex].classList.add("active");
+            return;
         } else {
             allLetterElements[letterIndex].classList.add("incorrect");
         }
@@ -61,6 +72,9 @@ function handleBackspace(event) {
     if (event.ctrlKey) {
         if (lastSpaceIndex >= 0) {
             for (let i = letterIndex; i > spaceIndices[lastSpaceIndex]; i--) {
+                while (allLetterElements[i].previousElementSibling.tagName == "EXTRALETTER") {
+                    allLetterElements[i].previousElementSibling.remove();
+                }
                 allLetterElements[i].classList.remove("correct");
                 allLetterElements[i].classList.remove("incorrect");
             }
@@ -69,6 +83,11 @@ function handleBackspace(event) {
         }
     } else {
         if (letterIndex > 0) {
+            if (allLetterElements[letterIndex].previousElementSibling.tagName == "EXTRALETTER") {
+                allLetterElements[letterIndex].previousElementSibling.remove();
+                allLetterElements[letterIndex].classList.add("active");
+                return;
+            }
             letterIndex--
             allLetterElements[letterIndex].classList.remove("correct");
             allLetterElements[letterIndex].classList.remove("incorrect");
@@ -83,7 +102,7 @@ function handleBackspace(event) {
 
 function resetTest() {
     document.getElementById("letters").innerHTML = "";
-    letterIndex = 0;
+    letterIndex = 1;
     lastSpaceIndex = 0;
     wordsList = [];
     spaceIndices = [0];

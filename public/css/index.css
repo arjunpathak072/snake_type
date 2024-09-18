@@ -70,7 +70,7 @@ table {
     overflow-y: hidden;
 }
 
-#statusLine {
+#timerBar div {
     background-color: var(--darkModeStatusLine);
     color: var(--darkModeFontColor);
     position: fixed;
@@ -81,9 +81,9 @@ table {
 }
 
 .active {
-    /* background-color: var(--darkModeHighlight); */
+    background-color: var(--darkModeHighlight);
     border-radius: 2px;
-    animation: blink 1.5s linear infinite;
+    color: var(--darkModeBackground);
 }
 
 .incorrect {
@@ -92,22 +92,4 @@ table {
 
 .correct {
     color: var(--darkModeFontCorrect);
-}
-
-@keyframes blink {
-    0% {
-        background-color: rgba(0, 122, 204, 0);
-    }
-    25% {
-        background-color: rgba(0, 122, 204, 0.5);
-    }
-    50% {
-        background-color: rgba(0, 122, 204, 1);
-    }
-    75% {
-        background-color: rgba(0, 122, 204, 0.5);
-    }
-    100% {
-        background-color: rgba(0, 122, 204, 0);
-    }
 }
