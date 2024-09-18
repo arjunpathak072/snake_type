@@ -3,6 +3,7 @@ let letterIndex = 1;
 let currentLetter = '';
 let lastSpaceIndex = 0;
 let spaceIndices = [0];
+let delta = -64;
 
 function initWordsList() {
     for (let i = 0; i < 100; i++) {
@@ -54,11 +55,15 @@ function handlePrintableCharacter(typedCharacter) {
         } else {
             allLetterElements[letterIndex].classList.add("incorrect");
         }
-        if (lastSpaceIndex+1 < spaceIndices.length && letterIndex > spaceIndices[lastSpaceIndex+1]) {
+        if (lastSpaceIndex + 1 < spaceIndices.length && letterIndex > spaceIndices[lastSpaceIndex + 1]) {
             lastSpaceIndex++;
         }
         letterIndex++;
         allLetterElements[letterIndex].classList.add("active");
+        if (Math.ceil(allLetterElements[letterIndex].getBoundingClientRect().top) == 128) {
+            lettersElement.style.transform = `translate(0, ${delta}px)`
+            delta -= 64;
+        }
     } else {
         resetTest();
     }
@@ -78,11 +83,11 @@ function handleBackspace(event) {
                 allLetterElements[i].classList.remove("correct");
                 allLetterElements[i].classList.remove("incorrect");
             }
-            letterIndex = spaceIndices[lastSpaceIndex]+1;
+            letterIndex = spaceIndices[lastSpaceIndex] + 1;
             lastSpaceIndex--;
         }
     } else {
-        if (letterIndex > 0) {
+        if (letterIndex > 1) {
             if (allLetterElements[letterIndex].previousElementSibling.tagName == "EXTRALETTER") {
                 allLetterElements[letterIndex].previousElementSibling.remove();
                 allLetterElements[letterIndex].classList.add("active");
@@ -106,8 +111,8 @@ function resetTest() {
     lastSpaceIndex = 0;
     wordsList = [];
     spaceIndices = [0];
-    initWords();
-    showWords();
+    initWordsList();
+    renderWords();
 }
 
 document.addEventListener("keydown", (event) => {
@@ -129,9 +134,6 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-/**
- * @brief Disbale all click evenets globally for the DOM
- */
 document.addEventListener("mousedown", handler, true);
 function handler(e) {
     e.stopPropagation();

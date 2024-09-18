@@ -43,12 +43,11 @@ table {
 }
 
 :root {
-    --darkModeBackground: #000;
-    --darkModeFontColor: #848484;
-    --darkModeFontCorrect:#ededed ;
-    --darkModeFontIncorrect: #f60002;
-    --darkModeStatusLine: #242424;
-    --darkModeHighlight: #007acc;
+    --darkModeBackground: rgb(30, 30, 30);
+    --darkModeFontColor: rgb(77, 77, 77);
+    --darkModeFontCorrect:rgb(212, 212, 212);
+    --darkModeFontIncorrect: rgb(244, 71, 71);
+    --darkModeHighlight: rgb(86, 156, 214);
 }
 
 #wrapper {
@@ -62,12 +61,18 @@ table {
     font-size: 32px;
 }
 
+#window {
+    height: 192px;
+    width: 100%;
+    overflow: hidden;
+}
+
 #letters {
     height: 100%;
     width: 100%;
     font-family: 'Courier New', Courier, monospace;
     overflow-x: wrap;
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
 }
 
 #timerBar div {
