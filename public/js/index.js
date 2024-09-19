@@ -60,8 +60,9 @@ function handlePrintableCharacter(typedCharacter) {
         }
         letterIndex++;
         allLetterElements[letterIndex].classList.add("active");
-        if (Math.ceil(allLetterElements[letterIndex].getBoundingClientRect().top) == 128) {
-            lettersElement.style.transform = `translate(0, ${delta}px)`
+        console.log(Math.ceil(allLetterElements[letterIndex].getBoundingClientRect().top));
+        if (Math.ceil(allLetterElements[letterIndex].getBoundingClientRect().top) == 192) {
+            lettersElement.style.transform = `translate(0, ${delta}px)`;
             delta -= 64;
         }
     } else {
@@ -111,6 +112,7 @@ function resetTest() {
     lastSpaceIndex = 0;
     wordsList = [];
     spaceIndices = [0];
+    delta = 1 * document.getElementsByTagName("letter").clientHeight;
     initWordsList();
     renderWords();
 }

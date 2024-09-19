@@ -62,17 +62,20 @@ table {
 }
 
 #window {
-    height: 192px;
+    height: calc(64px * 3);
     width: 100%;
-    overflow: hidden;
+    overflow-y: hidden;
 }
 
 #letters {
     height: 100%;
     width: 100%;
     font-family: 'Courier New', Courier, monospace;
-    overflow-x: wrap;
-    /* overflow-y: hidden; */
+    word-break: keep-all;
+}
+
+letter {
+    white-space-collapse: preserve;
 }
 
 #timerBar div {
