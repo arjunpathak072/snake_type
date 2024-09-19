@@ -48,6 +48,7 @@ table {
     --darkModeFontCorrect:rgb(212, 212, 212);
     --darkModeFontIncorrect: rgb(244, 71, 71);
     --darkModeHighlight: rgb(86, 156, 214);
+    --darkModeBrightest: rgb(0, 122, 204);
 }
 
 #wrapper {
@@ -55,14 +56,15 @@ table {
     color: var(--darkModeFontColor);
     height: 100vh;
     width: 100vw;
-    padding: 50px 50px 50px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     box-sizing: border-box;
-    line-height: 64px;
-    font-size: 32px;
 }
 
 #window {
-    height: calc(64px * 3);
+    height: calc(4rem * 3);
     width: 100%;
     overflow-y: hidden;
 }
@@ -72,25 +74,20 @@ table {
     width: 100%;
     font-family: 'Courier New', Courier, monospace;
     word-break: keep-all;
+    padding-left: 5%;
+    padding-right: 5%;
+    box-sizing: border-box;
+    line-height: 4rem;
+    font-size: 2rem;
 }
 
 letter {
     white-space-collapse: preserve;
 }
 
-#timerBar div {
-    background-color: var(--darkModeStatusLine);
-    color: var(--darkModeFontColor);
-    position: fixed;
-    bottom: 0;
-    z-index: 1;
-    height: 24px;
-    width: 100%;
-}
-
 .active {
     background-color: var(--darkModeHighlight);
-    border-radius: 2px;
+    border-radius: 10%;
     color: var(--darkModeBackground);
 }
 
@@ -100,4 +97,12 @@ letter {
 
 .correct {
     color: var(--darkModeFontCorrect);
+}
+
+#timeInfo {
+    font-size: 3rem;
+    padding-left: 5%;
+    align-self: flex-start;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--darkModeBrightest);
 }

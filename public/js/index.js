@@ -3,7 +3,12 @@ let letterIndex = 1;
 let currentLetter = '';
 let lastSpaceIndex = 0;
 let spaceIndices = [0];
-let delta = -64;
+let delta = -4;
+let firstLineOffset = 0;
+let thirdLineOffset = 0;
+let timer;
+let timeLeft = 15;
+let isTyping = false;
 
 function initWordsList() {
     for (let i = 0; i < 100; i++) {
@@ -34,7 +39,11 @@ function renderWords() {
         spaceIndices.push(idx);
         idx++
     }
-    lettersElement.querySelectorAll("letter")[1].classList.add("active");
+    let firstLetter = lettersElement.querySelectorAll("letter")[1];
+    firstLetter.classList.add("active");
+    firstLineOffset = Math.ceil(firstLetter.getBoundingClientRect().top);
+    thirdLineOffset = firstLineOffset + convertRemToPixels(8);
+    document.getElementById("timeInfo").innerText = timeLeft;
 }
 
 function handlePrintableCharacter(typedCharacter) {
@@ -42,7 +51,11 @@ function handlePrintableCharacter(typedCharacter) {
     let allLetterElements = lettersElement.querySelectorAll("letter");
     allLetterElements[letterIndex].classList.remove("active");
 
-    if (letterIndex < allLetterElements.length - 1) {
+    if (letterIndex < allLetterElements.length - 1 && timeLeft > 0) {
+        if (!isTyping) {
+            isTyping = true;
+            timer = setInterval(initTimer, 1000);
+        }
         if (allLetterElements[letterIndex].innerText == typedCharacter) {
             allLetterElements[letterIndex].classList.add("correct");
         } else if (allLetterElements[letterIndex].innerText == ' ') {
@@ -60,10 +73,10 @@ function handlePrintableCharacter(typedCharacter) {
         }
         letterIndex++;
         allLetterElements[letterIndex].classList.add("active");
-        console.log(Math.ceil(allLetterElements[letterIndex].getBoundingClientRect().top));
-        if (Math.ceil(allLetterElements[letterIndex].getBoundingClientRect().top) == 192) {
-            lettersElement.style.transform = `translate(0, ${delta}px)`;
-            delta -= 64;
+
+        if (Math.ceil(allLetterElements[letterIndex].getBoundingClientRect().top) == thirdLineOffset) {
+            lettersElement.style.transform = `translate(0, ${delta}rem)`;
+            delta -= 4;
         }
     } else {
         resetTest();
@@ -112,9 +125,24 @@ function resetTest() {
     lastSpaceIndex = 0;
     wordsList = [];
     spaceIndices = [0];
-    delta = 1 * document.getElementsByTagName("letter").clientHeight;
+    timeLeft = 15;
+    isTyping = false;
+    clearInterval(timer);
     initWordsList();
     renderWords();
+}
+
+function initTimer() {
+    if (timeLeft > 0) {
+        timeLeft--;
+        document.getElementById("timeInfo").innerText = timeLeft;
+    } else {
+        resetTest();
+    }
+}
+
+function convertRemToPixels(rem) {    
+    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
 document.addEventListener("keydown", (event) => {
