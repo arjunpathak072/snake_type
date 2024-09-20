@@ -3,15 +3,22 @@ let letterIndex = 1;
 let currentLetter = '';
 let lastSpaceIndex = 0;
 let spaceIndices = [0];
+
 let delta = -4;
 let firstLineOffset;
 let thirdLineOffset;
+
 let timer;
-let timeLeft = 15;
-let isTyping = false;
+let timeConfig = 15;
+let timeLeft = timeConfig;
+
 let rightCharsTyped = 0;
 let totalCharsTyped = 0;
+
+let isTyping = false;
 let lettersShown = true;
+let commandMode = false;
+
 
 function initWordsList() {
     for (let i = 0; i < 100; i++) {
@@ -42,13 +49,9 @@ function renderWords() {
         spaceIndices.push(idx);
         idx++
     }
-    renderTimer(timeLeft);
+    document.getElementById("timeInfo").innerText = timeLeft;
     let allLetterElements = document.getElementsByTagName("letter");
     initLineOffsets(allLetterElements[letterIndex]);
-}
-
-function renderTimer(timeLeft) {
-    document.getElementById("timeInfo").innerText = timeLeft;
 }
 
 function initLineOffsets(firstLetter) {
@@ -149,12 +152,13 @@ function resetTest() {
     lastSpaceIndex = 0;
     wordsList = [];
     spaceIndices = [0];
-    timeLeft = 15;
+    timeLeft = timeConfig;
     delta = -4;
     isTyping = false;
     totalCharsTyped = 0;
     rightCharsTyped = 0;
     lettersShown = true;
+    commandMode = false;
     clearInterval(timer);
 }
 
@@ -173,7 +177,7 @@ function initTimer() {
 }
 
 function calculateResults() {
-    let normalizedTime = 15 / 60;
+    let normalizedTime = timeConfig / 60;
     let wpm = Math.round((rightCharsTyped / 5) / normalizedTime);
     let rwpm = Math.round((totalCharsTyped / 5) / normalizedTime);
     let accuracy = Math.round((rightCharsTyped / totalCharsTyped) * 100);
@@ -181,7 +185,7 @@ function calculateResults() {
     document.getElementById("wpm").innerText = wpm;
     document.getElementById("rwpm").innerText = rwpm;
     document.getElementById("accuracy").innerText = accuracy;
-    document.getElementById("timeTaken").innerText = 15;
+    document.getElementById("timeTaken").innerText = timeConfig;
     document.getElementById("charsTyped").innerText = totalCharsTyped;
 }
 
@@ -213,27 +217,56 @@ function convertRemToPixels(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
+function handleCommands(command) {
+    console.log(command);
+    const setTimeoutRegex = /set timeout [0-9]*$/;
+    const showHistoryRegex = /show history/
+    
+    if (command.match(showHistoryRegex).length > 0) {
+        window.location.href = "history.html";
+    }
+}
+
+document.getElementById("statusLine").addEventListener("keydown", (event) => {
+    switch (event.code) {
+        case "Escape":
+            document.getElementById("statusLine").value = "";
+            document.getElementById("statusLine").blur();
+            commandMode = false;
+            break;
+        case "Enter":
+            handleCommands(document.getElementById("statusLine").value);
+            document.getElementById("statusLine").blur();
+            document.getElementById("statusLine").value = "";
+            commandMode = false;
+            break;
+    }
+})
+
 document.addEventListener("keydown", (event) => {
-    if (lettersShown) {
+    if (lettersShown && !commandMode) {
         switch (event.code) {
             case "Enter":
                 resetTest();
                 initWordsList();
                 renderWords();
                 break;
-
             case `Key${event.key.toUpperCase()}`:
             case "Space":
                 if (!event.altKey && !event.ctrlKey) {
                     handlePrintableCharacter(event.key);
                 }
                 break;
-
             case "Backspace":
                 handleBackspace(event);
                 break;
+            case "Semicolon":
+                event.preventDefault();
+                document.getElementById("statusLine").focus();
+                commandMode = true;
+                break;
         }
-    } else if (event.code == "Enter") {
+    } else if (!lettersShown && event.code == "Enter") {
         hideResults();
         showLetters();
         showTimeInfo();

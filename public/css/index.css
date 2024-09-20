@@ -54,7 +54,7 @@ table {
 #wrapper {
     background-color: var(--darkModeBackground);
     color: var(--darkModeFontColor);
-    height: 100vh;
+    height: calc(100vh - 20px);
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -123,17 +123,17 @@ letter {
 
 #testResults div {
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
 }
 
 #testResults .suffix {
+    white-space-collapse: preserve;
     color: var(--darkModeFontColor);
     font-size: 2rem;
     align-self: last baseline;
 }
 
 #testResults .prefix {
+    white-space-collapse: preserve;
     font-size: 2rem;
     align-self: first baseline;
 }
@@ -146,4 +146,22 @@ letter {
     font-size: 4rem;
     color: var(--darkModeHighlight);
     font-family: 'Courier New', Courier, monospace;
+}
+
+#statusLine:focus {
+    outline: none;
+}
+
+#statusLine {
+    box-shadow: none;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    bottom: 0;
+    height: 20px;
+    width: 100vw;
+    background-color: var(--darkModeBackground);
+    font-size: 1rem;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--darkModeFontCorrect);
 }
