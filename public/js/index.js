@@ -4,11 +4,14 @@ let currentLetter = '';
 let lastSpaceIndex = 0;
 let spaceIndices = [0];
 let delta = -4;
-let firstLineOffset = 0;
-let thirdLineOffset = 0;
+let firstLineOffset;
+let thirdLineOffset;
 let timer;
 let timeLeft = 15;
 let isTyping = false;
+let rightCharsTyped = 0;
+let totalCharsTyped = 0;
+let lettersShown = true;
 
 function initWordsList() {
     for (let i = 0; i < 100; i++) {
@@ -39,11 +42,19 @@ function renderWords() {
         spaceIndices.push(idx);
         idx++
     }
-    let firstLetter = lettersElement.querySelectorAll("letter")[1];
-    firstLetter.classList.add("active");
+    renderTimer(timeLeft);
+    let allLetterElements = document.getElementsByTagName("letter");
+    initLineOffsets(allLetterElements[letterIndex]);
+}
+
+function renderTimer(timeLeft) {
+    document.getElementById("timeInfo").innerText = timeLeft;
+}
+
+function initLineOffsets(firstLetter) {
     firstLineOffset = Math.ceil(firstLetter.getBoundingClientRect().top);
     thirdLineOffset = firstLineOffset + convertRemToPixels(8);
-    document.getElementById("timeInfo").innerText = timeLeft;
+    firstLetter.classList.add("active");
 }
 
 function handlePrintableCharacter(typedCharacter) {
@@ -51,13 +62,15 @@ function handlePrintableCharacter(typedCharacter) {
     let allLetterElements = lettersElement.querySelectorAll("letter");
     allLetterElements[letterIndex].classList.remove("active");
 
-    if (letterIndex < allLetterElements.length - 1 && timeLeft > 0) {
+    if (letterIndex < allLetterElements.length - 1) {
+        totalCharsTyped++;
         if (!isTyping) {
             isTyping = true;
             timer = setInterval(initTimer, 1000);
         }
         if (allLetterElements[letterIndex].innerText == typedCharacter) {
             allLetterElements[letterIndex].classList.add("correct");
+            rightCharsTyped++;
         } else if (allLetterElements[letterIndex].innerText == ' ') {
             let extraLetter = document.createElement("extraLetter");
             extraLetter.innerText = typedCharacter;
@@ -79,6 +92,10 @@ function handlePrintableCharacter(typedCharacter) {
             delta -= 4;
         }
     } else {
+        calculateResults();
+        hideLetters();
+        hideTimeInfo();
+        showResults();
         resetTest();
     }
 }
@@ -94,6 +111,9 @@ function handleBackspace(event) {
                 while (allLetterElements[i].previousElementSibling.tagName == "EXTRALETTER") {
                     allLetterElements[i].previousElementSibling.remove();
                 }
+                if (allLetterElements[i].classList.contains("correct")) {
+                    rightCharsTyped--;
+                }
                 allLetterElements[i].classList.remove("correct");
                 allLetterElements[i].classList.remove("incorrect");
             }
@@ -108,12 +128,16 @@ function handleBackspace(event) {
                 return;
             }
             letterIndex--
+            if (allLetterElements[letterIndex].classList.contains("correct")) {
+                rightCharsTyped--;
+            }
             allLetterElements[letterIndex].classList.remove("correct");
             allLetterElements[letterIndex].classList.remove("incorrect");
 
             if (letterIndex < spaceIndices[lastSpaceIndex] && lastSpaceIndex > 0) {
                 lastSpaceIndex--;
             }
+            totalCharsTyped--;
         }
     }
     allLetterElements[letterIndex].classList.add("active");
@@ -126,10 +150,12 @@ function resetTest() {
     wordsList = [];
     spaceIndices = [0];
     timeLeft = 15;
+    delta = -4;
     isTyping = false;
+    totalCharsTyped = 0;
+    rightCharsTyped = 0;
+    lettersShown = true;
     clearInterval(timer);
-    initWordsList();
-    renderWords();
 }
 
 function initTimer() {
@@ -137,30 +163,83 @@ function initTimer() {
         timeLeft--;
         document.getElementById("timeInfo").innerText = timeLeft;
     } else {
-        resetTest();
+        calculateResults();
+        hideLetters();
+        hideTimeInfo();
+        showResults();
+        clearInterval(timer);
+        lettersShown = false;
     }
 }
 
-function convertRemToPixels(rem) {    
+function calculateResults() {
+    let normalizedTime = 15 / 60;
+    let wpm = Math.round((rightCharsTyped / 5) / normalizedTime);
+    let rwpm = Math.round((totalCharsTyped / 5) / normalizedTime);
+    let accuracy = Math.round((rightCharsTyped / totalCharsTyped) * 100);
+
+    document.getElementById("wpm").innerText = wpm;
+    document.getElementById("rwpm").innerText = rwpm;
+    document.getElementById("accuracy").innerText = accuracy;
+    document.getElementById("timeTaken").innerText = 15;
+    document.getElementById("charsTyped").innerText = totalCharsTyped;
+}
+
+function showResults() {
+    document.getElementById("testResults").style.display = "grid";
+}
+
+function hideResults() {
+    document.getElementById("testResults").style.display = "none";
+}
+
+function hideLetters() {
+    document.getElementById("letters").style.display = "none";
+}
+
+function showLetters() {
+    document.getElementById("letters").style.display = "block";
+}
+
+function showTimeInfo() {
+    document.getElementById("timeInfo").style.display = "block";
+}
+
+function hideTimeInfo() {
+    document.getElementById("timeInfo").style.display = "none";
+}
+
+function convertRemToPixels(rem) {
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
 document.addEventListener("keydown", (event) => {
-    switch (event.code) {
-        case "Enter":
-            resetTest();
-            break;
+    if (lettersShown) {
+        switch (event.code) {
+            case "Enter":
+                resetTest();
+                initWordsList();
+                renderWords();
+                break;
 
-        case `Key${event.key.toUpperCase()}`:
-        case "Space":
-            if (!event.altKey && !event.ctrlKey) {
-                handlePrintableCharacter(event.key);
-            }
-            break;
+            case `Key${event.key.toUpperCase()}`:
+            case "Space":
+                if (!event.altKey && !event.ctrlKey) {
+                    handlePrintableCharacter(event.key);
+                }
+                break;
 
-        case "Backspace":
-            handleBackspace(event);
-            break;
+            case "Backspace":
+                handleBackspace(event);
+                break;
+        }
+    } else if (event.code == "Enter") {
+        hideResults();
+        showLetters();
+        showTimeInfo();
+        resetTest();
+        initWordsList();
+        renderWords();
     }
 });
 

@@ -106,3 +106,44 @@ letter {
     font-family: 'Courier New', Courier, monospace;
     color: var(--darkModeBrightest);
 }
+
+#testResults {
+    display: none;
+    align-items: center;
+    grid-template-columns: auto auto auto;
+    grid-template-rows: auto auto;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 5%;
+    padding-right: 5%;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--darkModeFontCorrect);
+}
+
+#testResults div {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+#testResults .suffix {
+    color: var(--darkModeFontColor);
+    font-size: 2rem;
+    align-self: last baseline;
+}
+
+#testResults .prefix {
+    font-size: 2rem;
+    align-self: first baseline;
+}
+
+#testResults div span {
+    align-self: last baseline;
+    font-weight: normal;
+    margin-left: 5%;
+    margin-right: 5%;
+    font-size: 4rem;
+    color: var(--darkModeHighlight);
+    font-family: 'Courier New', Courier, monospace;
+}
