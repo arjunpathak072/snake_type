@@ -36,8 +36,8 @@ function handlePrintableCharacter(typedCharacter) {
         state.incrementLetterIndex();
         allLetterElements[state.getLetterIndex()].classList.add("active");
 
-        if (Math.ceil(allLetterElements[state.getLetterIndex()].getBoundingClientRect().top) == state.getThirdLineOffset) {
-            lettersElement.style.transform = `translate(0, ${delta}rem)`;
+        if (Math.ceil(allLetterElements[state.getLetterIndex()].getBoundingClientRect().top) == state.getThirdLineOffset()) {
+            lettersElement.style.transform = `translate(0, ${state.getDelta()}rem)`;
             state.decrementDelta(4);
         }
     } else {

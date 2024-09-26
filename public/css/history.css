@@ -60,13 +60,17 @@ table {
 }
 
 #historyTable th {
+    color: var(--darkModeFontColor);
+    display: flex;
+    justify-content: space-around;
     font-size: 2rem;
 }
 
 #historyTable tr {
+    border: 2px transparent solid;
     box-sizing: border-box;
     padding: 2% 2% 2% 2%;
-    border-radius: 20px;
+    border-radius: 10px;
     width: 100%;
     display: flex;
     justify-content: space-around;
@@ -85,6 +89,6 @@ table {
     overflow-y: auto;
 }
 
-#historyTable td {
-    font-size: 1rem;
+#historyTable tr td {
+    font-size: 2rem;
 }

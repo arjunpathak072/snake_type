@@ -1,5 +1,3 @@
-let history = [];
-
 function initWordsList() {
     for (let i = 0; i < 100; i++) {
         randomWord = allWords[Math.floor(Math.random() * allWords.length)];
@@ -48,10 +46,13 @@ function timerCallback() {
     if (!state.decrementTimeLeft()) {
         hideLetters();
         hideTimeInfo();
-        renderResults(calculateResults());
+
+        const result = calculateResults()
+        renderResults(result);
+        saveResults(result);
+
         showResults();
         clearInterval(state.getTimerId());
-        // state.reset();
         state.toggleLettersShown();
     } else {
         document.getElementById("timeInfo").innerText = state.getTimeLeft();
@@ -85,6 +86,17 @@ function renderResults(result) {
     document.getElementById("accuracy").innerText = result.accuracy;
     document.getElementById("maxTime").innerText = result.maxTime;
     document.getElementById("charsTyped").innerText = result.totalCharsTyped;
+}
+
+function saveResults(result) {
+    if (localStorage.getItem("history") == null) {
+        localStorage.setItem("history", "[]");
+    }
+    const history = localStorage.getItem("history");
+    const historyArray = JSON.parse(history);
+
+    historyArray.push(result);
+    localStorage.setItem("history", JSON.stringify(historyArray));
 }
 
 document.getElementById("statusLine").addEventListener("keydown", (event) => {
