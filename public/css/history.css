@@ -52,43 +52,38 @@ table {
     --darkModeBrightest: rgb(0, 122, 204);
 }
 
-#historyTable {
-    row-gap: 100px;
-    width: 100%;
+#historyContainer {
+    padding: 2em 2em 2em 2em;
+    gap: 2em;
+    box-sizing: border-box;
+    display: flex;
     height: 100%;
-    color: var(--darkModeFontCorrect);
+    width: 100%;
+    background-color: var(--darkModeBackground);
 }
 
-#historyTable th {
-    color: var(--darkModeFontColor);
-    display: flex;
-    justify-content: space-around;
+#historyTable {
+    height: 100%;
+    width: 70%;
+}
+
+#historySummary {
     font-size: 2rem;
+    color: var(--darkModeFontCorrect);
+    width: 30%;
+    height: fit-content;
+}
+
+#historySummary div {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5em 0.5em 0.5em 0.5em;
 }
 
 #historyTable tr {
-    border: 2px transparent solid;
-    box-sizing: border-box;
-    padding: 2% 2% 2% 2%;
-    border-radius: 10px;
-    width: 100%;
+    padding: 0.5em 0.5em 0.5em 0.5em;
     display: flex;
-    justify-content: space-around;
-}
-
-#historyTable tr:hover {
-    border: 2px var(--darkModeHighlight) solid;
-}
-
-#historyContainer {
-    background-color: var(--darkModeBackground);
-    box-sizing: border-box;
-    height: 100vh;
-    width: 100vw;
-    padding: 5% 5% 5% 5%;
-    overflow-y: auto;
-}
-
-#historyTable tr td {
+    justify-content: space-between;
     font-size: 2rem;
+    color: var(--darkModeFontColor);
 }
