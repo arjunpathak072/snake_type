@@ -31,6 +31,7 @@ function renderWords() {
     document.getElementById("timeInfo").innerText = state.getMaxTime();
     const allLetterElements = document.getElementsByTagName("letter");
     const firstLetter = allLetterElements[state.getLetterIndex()];
+    console.log(firstLetter);
     firstLetter.classList.add("active");
     initLineOffsets(firstLetter);
 }
@@ -80,7 +81,6 @@ function calculateResults() {
 }
 
 function renderResults(result) {
-    console.log(result);
     document.getElementById("wpm").innerText = result.wpm;
     document.getElementById("rwpm").innerText = result.rwpm;
     document.getElementById("accuracy").innerText = result.accuracy;
@@ -97,63 +97,6 @@ function saveResults(result) {
 
     historyArray.push(result);
     localStorage.setItem("history", JSON.stringify(historyArray));
-}
-
-document.getElementById("statusLine").addEventListener("keydown", (event) => {
-    switch (event.code) {
-        case "Escape":
-            document.getElementById("statusLine").value = "";
-            document.getElementById("statusLine").blur();
-            state.toggleCommandMode();
-            break;
-        case "Enter":
-            handleCommands(document.getElementById("statusLine").value);
-            document.getElementById("statusLine").blur();
-            document.getElementById("statusLine").value = "";
-            state.toggleCommandMode();
-            break;
-    }
-})
-
-document.addEventListener("keydown", (event) => {
-    if (state.getLettersShown() && !state.getCommandMode()) {
-        switch (event.code) {
-            case "Enter":
-                state.reset();
-                document.getElementById("letters").innerHTML = "";
-                initWordsList();
-                renderWords();
-                break;
-            case `Key${event.key.toUpperCase()}`:
-            case "Space":
-                if (!event.altKey && !event.ctrlKey) {
-                    handlePrintableCharacter(event.key);
-                }
-                break;
-            case "Backspace":
-                handleBackspace(event);
-                break;
-            case "Semicolon":
-                event.preventDefault();
-                document.getElementById("statusLine").focus();
-                state.toggleCommandMode();
-                break;
-        }
-    } else if (!state.getLettersShown() && event.code == "Enter") {
-        state.reset();
-        document.getElementById("letters").innerHTML = "";
-        hideResults();
-        showLetters();
-        showTimeInfo();
-        initWordsList();
-        renderWords(calculateResults());
-    }
-});
-
-document.addEventListener("mousedown", handler, true);
-function handler(e) {
-    e.stopPropagation();
-    e.preventDefault();
 }
 
 initWordsList();

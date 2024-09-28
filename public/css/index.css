@@ -122,20 +122,21 @@ letter {
 }
 
 #testResults div {
+    justify-content: space-evenly;
     display: flex;
 }
 
 #testResults .suffix {
     white-space-collapse: preserve;
     color: var(--darkModeFontColor);
-    font-size: 2rem;
+    font-size: 2em;
     align-self: last baseline;
 }
 
 #testResults .prefix {
     white-space-collapse: preserve;
-    font-size: 2rem;
-    align-self: first baseline;
+    font-size: 2em;
+    align-self: last baseline;
 }
 
 #testResults div span {
@@ -164,4 +165,17 @@ letter {
     font-size: 1rem;
     font-family: 'Courier New', Courier, monospace;
     color: var(--darkModeFontCorrect);
+}
+
+@media only screen and (max-width: 1190px) {
+    #testResults {
+        grid-template-rows: auto;
+        grid-template-columns: auto;
+    }
+    #window {
+        height: calc(4rem * 6);
+    }
+    #testResults div span {
+        font-size: 3rem;
+    }
 }

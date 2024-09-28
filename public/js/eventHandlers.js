@@ -97,13 +97,12 @@ function handleBackspace(event) {
 }
 
 function handleCommands(command) {
-    console.log(command);
-    const setTimeoutRegex = /set timeout [0-9]*$/;
-    const showHistoryRegex = /show history/
-    
+    const setTimeoutRegex = /set timeout/;
+    const showHistoryRegex = /show history/;
+
     if (command.match(showHistoryRegex).length > 0) {
         window.location.href = "history.html";
-    } else if (command.mathc(setTimeoutRegex).length > 0) {
+    } else if (command.match(setTimeoutRegex).length > 0) {
         console.log("set timeout command detected");
     }
 }
